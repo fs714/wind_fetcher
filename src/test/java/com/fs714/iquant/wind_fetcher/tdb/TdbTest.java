@@ -1,10 +1,12 @@
 package com.fs714.iquant.wind_fetcher.tdb;
 
+import cn.com.wind.td.tdb.CYCTYPE;
+import cn.com.wind.td.tdb.Code;
+import cn.com.wind.td.tdb.KLine;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class TdbTest {
-    private static final String TEST_MARKET = "SZ-2-0";
     private Tdb tdb;
 
     @BeforeTest
@@ -17,7 +19,21 @@ public class TdbTest {
     }
 
     @Test
-    public void getCodeTableTest() {
-        tdb.getCodeTable(TEST_MARKET);
+    public void getCodesTest() {
+        String market = "SZ-2-0";
+        Code[] codes = tdb.getCodes(market);
+        Tdb.printCodes(codes);
+    }
+
+    @Test
+    public void getKlinesTest() {
+        String code = "000001.SZ";
+        String market = "SZ-2-0";
+        int cyctype = CYCTYPE.CYC_DAY;
+        int startDate = 20160801;
+        int endDate = 20160812;
+
+        KLine[] kLines = tdb.getKLines(code, market, cyctype, startDate, endDate);
+        Tdb.printKlines(kLines);
     }
 }

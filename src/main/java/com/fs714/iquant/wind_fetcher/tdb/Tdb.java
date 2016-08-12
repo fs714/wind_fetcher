@@ -1,17 +1,13 @@
 package com.fs714.iquant.wind_fetcher.tdb;
 
-import cn.com.wind.td.tdb.Code;
-import cn.com.wind.td.tdb.OPEN_SETTINGS;
-import cn.com.wind.td.tdb.ResLogin;
-import cn.com.wind.td.tdb.TDBClient;
+import cn.com.wind.td.tdb.*;
 import org.apache.log4j.Logger;
 
 public class Tdb {
-    private Logger logger;
+    private static Logger logger = Logger.getLogger(Tdb.class.getCanonicalName());
     private TDBClient client;
 
     Tdb(String ip, int port, String username, String password) {
-        logger = Logger.getLogger(Tdb.class.getCanonicalName());
         client = new TDBClient();
 
         OPEN_SETTINGS setting = new OPEN_SETTINGS();
@@ -41,17 +37,47 @@ public class Tdb {
         }
     }
 
-    public void getCodeTable(String marker) {
+    public Code[] getCodes(String marker) {
         Code[] codes = client.getCodeTable(marker);
 
         if (codes == null) {
-            logger.error("NetWork Error,getKline failed!");
-            return;
+            logger.error("NetWork Error, getCode failed!");
         }
 
+        return codes;
+    }
+
+    public static void printCodes(Code[] codes) {
         for (Code code : codes) {
             logger.info("CODE: " + code.getWindCode() + ", " + code.getMarket() + ", " + code.getCode() + ", "
                     + code.getENName() + ", " + code.getCNName() + ", " + code.getType());
+        }
+    }
+
+    public KLine[] getKLines(String code, String market, int cyctype, int startDate, int endDate) {
+        ReqKLine reqKL = new ReqKLine();
+        reqKL.setCode(code);
+        reqKL.setMarketKey(market);
+        reqKL.setCycType(cyctype);
+        reqKL.setCycDef(1);
+        reqKL.setBeginDate(startDate);
+        reqKL.setEndDate(endDate);
+
+        KLine[] klines = client.getKLine(reqKL);
+
+        if (klines == null) {
+            logger.error("NetWork Error, getKline failed!");
+        }
+
+        return klines;
+    }
+
+    public static void printKlines(KLine[] klines) {
+        logger.info("Success to get "  + klines.length + " klines for " + klines[0].getCode());
+        for (KLine k : klines ){
+            logger.info(k.getWindCode() + ", " + k.getDate() + ", " + k.getTime() + ", " + k.getOpen() + ", "
+                    + k.getHigh() + ", " + k.getLow() + ", " + k.getClose() + ", " + k.getVolume() + ", "
+                    + k.getTurover() + ", " + k.getMatchItems() + ", " + k.getInterest());
         }
     }
 }
