@@ -1,7 +1,9 @@
 .classpath
 .project
 *.iml
+*.log
 .settings/
 .idea/
+log/
 target/
 test-output/
