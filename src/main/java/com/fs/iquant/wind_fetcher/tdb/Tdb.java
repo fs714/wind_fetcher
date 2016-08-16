@@ -1,12 +1,12 @@
 package com.fs.iquant.wind_fetcher.tdb;
 
 import cn.com.wind.td.tdb.*;
+import com.fs.iquant.wind_fetcher.util.Util;
 import com.fs.iquant.wind_fetcher.exceptions.TdbConnectionException;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Tdb {
     public static final String MARKET_SH_SHARES = "SH-2-0";
@@ -15,7 +15,22 @@ public class Tdb {
     private static Logger logger = Logger.getLogger(Tdb.class.getCanonicalName());
     private TDBClient client;
 
-    Tdb(String ip, int port, String username, String password) throws TdbConnectionException {
+    private Code[] shSharesA;
+    private Code[] szSharesA;
+    private Code[] szSharesS;
+    private Code[] szSharesG;
+
+    private Code[] szSharesAll;
+
+    private Code[] shIndex;
+    private Code[] szIndex;
+
+    private Code[] shSharesAndIndex;
+    private Code[] szSharesAndIndex;
+
+    private Code[] allSharesAndIndex;
+
+    Tdb(String ip, int port, String username, String password) throws TdbConnectionException, TdbGetDataException {
         client = new TDBClient();
 
         OPEN_SETTINGS setting = new OPEN_SETTINGS();
@@ -43,6 +58,8 @@ public class Tdb {
                 logger.info(market[i] + " " + dyndate[i]);
             }
         }
+
+        initCodes();
     }
 
     public Code[] getCodes(String market) throws TdbGetDataException {
@@ -72,10 +89,23 @@ public class Tdb {
         Code codeInfo = client.getCodeInfo(code, market);
 
         if (codeInfo == null) {
-            throw  new TdbGetDataException("Return null with getCodeInfo");
+            throw new TdbGetDataException("Return null with getCodeInfo");
         }
 
         return codeInfo;
+    }
+
+    public void initCodes() throws TdbGetDataException {
+        shSharesA = getCodes(MARKET_SH_SHARES, CodeType.ID_BT_SHARES_A.getIndex());
+        szSharesA = getCodes(MARKET_SZ_SHARES, CodeType.ID_BT_SHARES_A.getIndex());
+        szSharesS = getCodes(MARKET_SZ_SHARES, CodeType.ID_BT_SHARES_S.getIndex());
+        szSharesG = getCodes(MARKET_SZ_SHARES, CodeType.ID_BT_SHARES_G.getIndex());
+        szSharesAll = Util.concatArray(szSharesA, szSharesS, szSharesG);
+        shIndex = getCodes(MARKET_SH_SHARES, CodeType.ID_BT_INDEX.getIndex());
+        szIndex = getCodes(MARKET_SZ_SHARES, CodeType.ID_BT_INDEX.getIndex());
+        shSharesAndIndex = Util.concatArray(shSharesA, shIndex);
+        szSharesAndIndex = Util.concatArray(szSharesAll, szIndex);
+        allSharesAndIndex = Util.concatArray(shSharesAndIndex, szSharesAndIndex);
     }
 
     public KLine[] getKLines(String code, String market, int cqflag, int cyctype, int cycdef, int autoComplete,
@@ -112,6 +142,46 @@ public class Tdb {
         return getKLines(code, market, REFILLFLAG.REFILL_BACKWARD, cyctype, cycdef, 0, beginDate, endDate, 0, 0);
     }
 
+    public Code[] getShSharesA() {
+        return shSharesA;
+    }
+
+    public Code[] getSzSharesA() {
+        return szSharesA;
+    }
+
+    public Code[] getSzSharesS() {
+        return szSharesS;
+    }
+
+    public Code[] getSzSharesG() {
+        return szSharesG;
+    }
+
+    public Code[] getSzSharesAll() {
+        return szSharesAll;
+    }
+
+    public Code[] getShIndex() {
+        return shIndex;
+    }
+
+    public Code[] getSzIndex() {
+        return szIndex;
+    }
+
+    public Code[] getShSharesAndIndex() {
+        return shSharesAndIndex;
+    }
+
+    public Code[] getSzSharesAndIndex() {
+        return szSharesAndIndex;
+    }
+
+    public Code[] getAllSharesAndIndex() {
+        return allSharesAndIndex;
+    }
+
     public static void printCode(Code code) {
         logger.info("CODE: " + code.getWindCode() + ", " + code.getMarket() + ", " + code.getCode() + ", "
                 + code.getENName() + ", " + code.getCNName() + ", " + code.getType());
@@ -124,8 +194,8 @@ public class Tdb {
     }
 
     public static void printKlines(KLine[] klines) {
-        logger.info("Success to get "  + klines.length + " klines for " + klines[0].getCode());
-        for (KLine k : klines ){
+        logger.info("Success to get " + klines.length + " klines for " + klines[0].getCode());
+        for (KLine k : klines) {
             logger.info(k.getWindCode() + ", " + k.getDate() + ", " + k.getTime() + ", " + k.getOpen() + ", "
                     + k.getHigh() + ", " + k.getLow() + ", " + k.getClose() + ", " + k.getVolume() + ", "
                     + k.getTurover() + ", " + k.getMatchItems() + ", " + k.getInterest());

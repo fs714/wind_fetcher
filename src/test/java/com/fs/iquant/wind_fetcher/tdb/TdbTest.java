@@ -18,7 +18,7 @@ public class TdbTest {
     private static Logger logger = Logger.getLogger(TdbTest.class.getCanonicalName());
 
     @BeforeTest
-    public void initTdbClient() {
+    public void initTdbClient() throws TdbGetDataException {
         String ip = "114.80.154.34";
         int port = 6271;
         String username = "TD1132104002";
@@ -29,7 +29,14 @@ public class TdbTest {
 
     @Test(enabled = false)
     public void getCodesTest() throws TdbGetDataException {
-         for (CodeType type : CodeType.values()) {
+        logger.info("------------ SH ------------");
+        for (CodeType type : CodeType.values()) {
+            Code[] codes = tdb.getCodes(Tdb.MARKET_SH_SHARES, type.getIndex());
+            logger.info("-----" + type.toString() + "(" + type.getIndex() + "): -----");
+            Tdb.printCodes(codes);
+        }
+        logger.info("------------ SZ ------------");
+        for (CodeType type : CodeType.values()) {
             Code[] codes = tdb.getCodes(Tdb.MARKET_SZ_SHARES, type.getIndex());
             logger.info("-----" + type.toString() + "(" + type.getIndex() + "): -----");
             Tdb.printCodes(codes);
@@ -42,7 +49,77 @@ public class TdbTest {
         Tdb.printCode(code);
     }
 
+    @Test(enabled = false)
+    public void getShSharesATest() {
+        Code[] codes = tdb.getShSharesA();
+        logger.info("------ Total Number getShSharesA: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzSharesATest() {
+        Code[] codes = tdb.getSzSharesA();
+        logger.info("------ Total Number getSzSharesA: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzSharesSTest() {
+        Code[] codes = tdb.getSzSharesS();
+        logger.info("------ Total Number getSzSharesS: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzSharesGTest() {
+        Code[] codes = tdb.getSzSharesG();
+        logger.info("------ Total Number getSzSharesG: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzSharesAllTest() {
+        Code[] codes = tdb.getSzSharesAll();
+        logger.info("------ Total Number getSzSharesAll: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getShIndexTest() {
+        Code[] codes = tdb.getShIndex();
+        logger.info("------ Total Number getShIndex: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzIndexTest() {
+        Code[] codes = tdb.getSzIndex();
+        logger.info("------ Total Number getSzIndex: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getShSharesAndIndexTest() {
+        Code[] codes = tdb.getShSharesAndIndex();
+        logger.info("------ Total Number getShSharesAndIndex: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
+    public void getSzSharesAndIndexTest() {
+        Code[] codes = tdb.getSzSharesAndIndex();
+        logger.info("------ Total Number getSzSharesAndIndex: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
     @Test(enabled = true)
+    public void getAllSharesAndIndexTest() {
+        Code[] codes = tdb.getAllSharesAndIndex();
+        logger.info("------ Total Number getAllSharesAndIndex: " + codes.length + " ------");
+        Tdb.printCodes(codes);
+    }
+
+    @Test(enabled = false)
     public void getKlinesTest() throws TdbGetDataException {
         KLine[] kLines;
         int cyctype = CYCTYPE.CYC_MINUTE;
@@ -59,11 +136,18 @@ public class TdbTest {
         Tdb.printKlines(kLines);
         kLines = tdb.getKLines(EXAMPLE_CODE_ONE, Tdb.MARKET_SZ_SHARES, cyctype, 4, beginDate, endDate, beginTime, endTime);
         Tdb.printKlines(kLines);
+
+        cyctype = CYCTYPE.CYC_DAY;
+        beginDate = 19900101;
+        endDate = 0;
+
+        kLines = tdb.getKLines(EXAMPLE_CODE_ONE, Tdb.MARKET_SZ_SHARES, cyctype, 1, beginDate, endDate);
+        Tdb.printKlines(kLines);
     }
 
     @Test(enabled = false)
     public void getMultiKlinesTest() throws TdbGetDataException {
-        String[] codeList = new String[]{"000731.SZ", "000732.SZ", "000733.SZ", "000735.SZ", "000736.SZ", };
+        String[] codeList = new String[]{"000731.SZ", "000732.SZ", "000733.SZ", "000735.SZ", "000736.SZ",};
         String market = "SZ-2-0";
         int cyctype = CYCTYPE.CYC_DAY;
         int cycdef = 1;
