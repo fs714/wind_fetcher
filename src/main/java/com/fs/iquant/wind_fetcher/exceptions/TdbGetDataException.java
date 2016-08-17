@@ -1,6 +1,6 @@
 package com.fs.iquant.wind_fetcher.exceptions;
 
-public class TdbGetDataException extends Exception{
+public class TdbGetDataException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public TdbGetDataException() {

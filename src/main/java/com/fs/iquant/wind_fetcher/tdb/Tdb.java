@@ -1,9 +1,9 @@
 package com.fs.iquant.wind_fetcher.tdb;
 
 import cn.com.wind.td.tdb.*;
-import com.fs.iquant.wind_fetcher.util.Util;
 import com.fs.iquant.wind_fetcher.exceptions.TdbConnectionException;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
+import com.fs.iquant.wind_fetcher.util.Util;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -60,6 +60,26 @@ public class Tdb {
         }
 
         initCodes();
+    }
+
+    public static void printCode(Code code) {
+        logger.info("CODE: " + code.getWindCode() + ", " + code.getMarket() + ", " + code.getCode() + ", "
+                + code.getENName() + ", " + code.getCNName() + ", " + code.getType());
+    }
+
+    public static void printCodes(Code[] codes) {
+        for (Code code : codes) {
+            printCode(code);
+        }
+    }
+
+    public static void printKlines(KLine[] klines) {
+        logger.info("Success to get " + klines.length + " klines for " + klines[0].getCode());
+        for (KLine k : klines) {
+            logger.info(k.getWindCode() + ", " + k.getDate() + ", " + k.getTime() + ", " + k.getOpen() + ", "
+                    + k.getHigh() + ", " + k.getLow() + ", " + k.getClose() + ", " + k.getVolume() + ", "
+                    + k.getTurover() + ", " + k.getMatchItems() + ", " + k.getInterest());
+        }
     }
 
     public Code[] getCodes(String market) throws TdbGetDataException {
@@ -133,13 +153,14 @@ public class Tdb {
 
     public KLine[] getKLines(String code, String market, int cyctype, int cycdef, int beginDate, int endDate,
                              int beginTime, int endtime) throws TdbGetDataException {
-        return getKLines(code, market, REFILLFLAG.REFILL_BACKWARD, cyctype, cycdef, 0, beginDate, endDate, beginTime,
-                endtime);
+        return getKLines(code, market, RefillFlag.REFILL_BACKWARD.getFlag(), cyctype, cycdef, 0, beginDate, endDate,
+                beginTime, endtime);
     }
 
     public KLine[] getKLines(String code, String market, int cyctype, int cycdef, int beginDate,
                              int endDate) throws TdbGetDataException {
-        return getKLines(code, market, REFILLFLAG.REFILL_BACKWARD, cyctype, cycdef, 0, beginDate, endDate, 0, 0);
+        return getKLines(code, market, RefillFlag.REFILL_BACKWARD.getFlag(), cyctype, cycdef, 0,
+                beginDate, endDate, 0, 0);
     }
 
     public Code[] getShSharesA() {
@@ -180,25 +201,5 @@ public class Tdb {
 
     public Code[] getAllSharesAndIndex() {
         return allSharesAndIndex;
-    }
-
-    public static void printCode(Code code) {
-        logger.info("CODE: " + code.getWindCode() + ", " + code.getMarket() + ", " + code.getCode() + ", "
-                + code.getENName() + ", " + code.getCNName() + ", " + code.getType());
-    }
-
-    public static void printCodes(Code[] codes) {
-        for (Code code : codes) {
-            printCode(code);
-        }
-    }
-
-    public static void printKlines(KLine[] klines) {
-        logger.info("Success to get " + klines.length + " klines for " + klines[0].getCode());
-        for (KLine k : klines) {
-            logger.info(k.getWindCode() + ", " + k.getDate() + ", " + k.getTime() + ", " + k.getOpen() + ", "
-                    + k.getHigh() + ", " + k.getLow() + ", " + k.getClose() + ", " + k.getVolume() + ", "
-                    + k.getTurover() + ", " + k.getMatchItems() + ", " + k.getInterest());
-        }
     }
 }

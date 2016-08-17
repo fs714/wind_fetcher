@@ -1,6 +1,6 @@
 package com.fs.iquant.wind_fetcher.exceptions;
 
-public class TdbConnectionException extends RuntimeException{
+public class TdbConnectionException extends RuntimeException {
     private static final long serialVersionUID = 2L;
 
     public TdbConnectionException() {

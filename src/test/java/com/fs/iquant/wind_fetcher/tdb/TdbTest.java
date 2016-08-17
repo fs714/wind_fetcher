@@ -1,10 +1,10 @@
 package com.fs.iquant.wind_fetcher.tdb;
 
-import cn.com.wind.td.tdb.CYCTYPE;
 import cn.com.wind.td.tdb.Code;
 import cn.com.wind.td.tdb.KLine;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
 import org.apache.log4j.Logger;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -13,11 +13,10 @@ import java.util.Date;
 
 public class TdbTest {
     private static final String EXAMPLE_CODE_ONE = "000001.SZ";
-
-    private Tdb tdb;
     private static Logger logger = Logger.getLogger(TdbTest.class.getCanonicalName());
+    private Tdb tdb;
 
-    @BeforeTest
+    @BeforeClass
     public void initTdbClient() throws TdbGetDataException {
         String ip = "114.80.154.34";
         int port = 6271;
@@ -112,7 +111,7 @@ public class TdbTest {
         Tdb.printCodes(codes);
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void getAllSharesAndIndexTest() {
         Code[] codes = tdb.getAllSharesAndIndex();
         logger.info("------ Total Number getAllSharesAndIndex: " + codes.length + " ------");
@@ -122,7 +121,7 @@ public class TdbTest {
     @Test(enabled = false)
     public void getKlinesTest() throws TdbGetDataException {
         KLine[] kLines;
-        int cyctype = CYCTYPE.CYC_MINUTE;
+        int cyctype = CycType.CYC_MINUTE.getFlag();
         int beginDate = 20130801;
         int endDate = 20130801;
         int beginTime = 143000000;
@@ -137,7 +136,7 @@ public class TdbTest {
         kLines = tdb.getKLines(EXAMPLE_CODE_ONE, Tdb.MARKET_SZ_SHARES, cyctype, 4, beginDate, endDate, beginTime, endTime);
         Tdb.printKlines(kLines);
 
-        cyctype = CYCTYPE.CYC_DAY;
+        cyctype = CycType.CYC_DAY.getFlag();
         beginDate = 19900101;
         endDate = 0;
 
@@ -149,7 +148,7 @@ public class TdbTest {
     public void getMultiKlinesTest() throws TdbGetDataException {
         String[] codeList = new String[]{"000731.SZ", "000732.SZ", "000733.SZ", "000735.SZ", "000736.SZ",};
         String market = "SZ-2-0";
-        int cyctype = CYCTYPE.CYC_DAY;
+        int cyctype = CycType.CYC_DAY.getFlag();
         int cycdef = 1;
         int beginDate = 20160801;
         int endDate = 20160812;
