@@ -1,4 +1,4 @@
-package com.fs.iquant.wind_fetcher.tdb;
+package com.fs.iquant.wind_fetcher.tdb.enums;
 
 public enum RefillFlag {
     REFILL_NONE(0),
@@ -7,7 +7,7 @@ public enum RefillFlag {
 
     private int flag;
 
-    private RefillFlag(int flag) {
+    RefillFlag(int flag) {
         this.flag = flag;
     }
 

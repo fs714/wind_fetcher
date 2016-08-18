@@ -1,4 +1,4 @@
-package com.fs.iquant.wind_fetcher.tdb;
+package com.fs.iquant.wind_fetcher.tdb.enums;
 
 public enum CodeType {
     ID_BT_INDEX(0x01),
@@ -16,7 +16,7 @@ public enum CodeType {
 
     private int index;
 
-    private CodeType(int index) {
+    CodeType(int index) {
         this.index = index;
     }
 

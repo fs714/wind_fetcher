@@ -7,7 +7,11 @@ public abstract class DocBase {
     protected ObjectId _id = new ObjectId();
     protected Document document;
 
-    DocBase() {
+    public DocBase() {
+    }
+
+    public DocBase(Document document) {
+        this.document = document;
     }
 
     public ObjectId get_id() {

@@ -3,6 +3,8 @@ package com.fs.iquant.wind_fetcher.tdb;
 import cn.com.wind.td.tdb.*;
 import com.fs.iquant.wind_fetcher.exceptions.TdbConnectionException;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
+import com.fs.iquant.wind_fetcher.tdb.enums.CodeType;
+import com.fs.iquant.wind_fetcher.tdb.enums.RefillFlag;
 import com.fs.iquant.wind_fetcher.util.Util;
 import org.apache.log4j.Logger;
 
@@ -30,7 +32,7 @@ public class Tdb {
 
     private Code[] allSharesAndIndex;
 
-    Tdb(String ip, int port, String username, String password) throws TdbConnectionException, TdbGetDataException {
+    public Tdb(String ip, int port, String username, String password) throws TdbConnectionException, TdbGetDataException {
         client = new TDBClient();
 
         OPEN_SETTINGS setting = new OPEN_SETTINGS();

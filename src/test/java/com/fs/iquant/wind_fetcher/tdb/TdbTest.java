@@ -3,6 +3,8 @@ package com.fs.iquant.wind_fetcher.tdb;
 import cn.com.wind.td.tdb.Code;
 import cn.com.wind.td.tdb.KLine;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
+import com.fs.iquant.wind_fetcher.tdb.enums.CodeType;
+import com.fs.iquant.wind_fetcher.tdb.enums.CycType;
 import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

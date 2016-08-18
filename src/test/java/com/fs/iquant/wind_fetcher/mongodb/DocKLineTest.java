@@ -1,7 +1,7 @@
 package com.fs.iquant.wind_fetcher.mongodb;
 
-import com.fs.iquant.wind_fetcher.tdb.CycType;
-import com.fs.iquant.wind_fetcher.tdb.RefillFlag;
+import com.fs.iquant.wind_fetcher.tdb.enums.CycType;
+import com.fs.iquant.wind_fetcher.tdb.enums.RefillFlag;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -23,8 +23,8 @@ import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Updates.set;
 
-public class KLineTest {
-    private static Logger logger = Logger.getLogger(KLineTest.class.getCanonicalName());
+public class DocKLineTest {
+    private static Logger logger = Logger.getLogger(DocKLineTest.class.getCanonicalName());
     private MongoClient client;
     private MongoDatabase db;
     private MongoCollection<Document> col;
@@ -48,11 +48,11 @@ public class KLineTest {
     @Test(enabled = false)
     public void insertTest() throws ParseException {
         logger.info("Start insertTest");
-        KLine kl1 = new KLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
+        DocKLine kl1 = new DocKLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
                 CycType.CYC_MINUTE.getFlag(), 1, 20160818, 94500000, 200, 400, 100, 300, 1000, 2000, 10);
-        KLine kl2 = new KLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
+        DocKLine kl2 = new DocKLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
                 CycType.CYC_MINUTE.getFlag(), 1, 20160818, 104500000, 2000, 4000, 1000, 3000, 10000, 20000, 100);
-        KLine kl3 = new KLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
+        DocKLine kl3 = new DocKLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
                 CycType.CYC_MINUTE.getFlag(), 1, 20160818, 144500000, 20000, 40000, 10000, 30000, 100000, 200000, 1000);
         logger.info(kl1.getDate());
         logger.info(kl2.getDate());
@@ -65,25 +65,25 @@ public class KLineTest {
     @Test(enabled = false, dependsOnMethods = "insertTest")
     public void findTest() throws ParseException {
         logger.info("Start findTest");
-        KLine kl;
+        DocKLine kl;
 
         logger.info("------ Find one by first() ------");
-        kl = new KLine(col.find().first());
+        kl = new DocKLine(col.find().first());
         logger.info(kl.toString());
 
         logger.info("------ Find one with sort() ascending ------");
-        kl = new KLine(col.find().sort(ascending("date")).first());
+        kl = new DocKLine(col.find().sort(ascending("date")).first());
         logger.info(kl.toString());
 
         logger.info("------ Find one with sort() descending ------");
-        kl = new KLine(col.find().sort(descending("date")).first());
+        kl = new DocKLine(col.find().sort(descending("date")).first());
         logger.info(kl.toString());
 
         logger.info("------ Find all by Cursor ------");
         MongoCursor<Document> cursor = col.find().iterator();
         try {
             while (cursor.hasNext()) {
-                kl = new KLine(cursor.next());
+                kl = new DocKLine(cursor.next());
                 logger.info(kl.toString());
             }
         } finally {
@@ -91,7 +91,7 @@ public class KLineTest {
         }
 
         logger.info("------ Find one with filter ------");
-        kl = new KLine(col.find(eq("windCode", "600000.SH")).first());
+        kl = new DocKLine(col.find(eq("windCode", "600000.SH")).first());
         logger.info(kl.toString());
 
         logger.info("------ Find a set by filter and Cursor ------");
@@ -100,7 +100,7 @@ public class KLineTest {
         cursor = col.find(gt("date", date)).iterator();
         try {
             while (cursor.hasNext()) {
-                kl = new KLine(cursor.next());
+                kl = new DocKLine(cursor.next());
                 logger.info(kl.toString());
             }
         } finally {
@@ -111,13 +111,13 @@ public class KLineTest {
     @Test(enabled = false, dependsOnMethods = "insertTest")
     public void updateTest() {
         logger.info("Start updateTest");
-        KLine kl;
-        kl = new KLine(col.find(eq("windCode", "600000.SH")).first());
+        DocKLine kl;
+        kl = new DocKLine(col.find(eq("windCode", "600000.SH")).first());
         kl.setName("PuFaBank");
         col.updateOne(eq("_id", kl.get_id()), set("name", kl.getName()));
         logger.info(col.find(eq("_id", kl.get_id())).first().get("name"));
 
-        kl = new KLine(col.find(eq("windCode", "600000.SH")).first());
+        kl = new DocKLine(col.find(eq("windCode", "600000.SH")).first());
         col.updateOne(eq("_id", kl.get_id()), set("name", "PuFaYinHang"));
         kl.setName("PuFaYinHang");
         logger.info(col.find(eq("_id", kl.get_id())).first().get("name"));
@@ -126,18 +126,18 @@ public class KLineTest {
     @Test(enabled = false, dependsOnMethods = "insertTest")
     public void replaceTest() throws ParseException {
         logger.info("Start replaceTest");
-        KLine kl;
-        kl = new KLine(col.find(eq("windCode", "600000.SH")).first());
+        DocKLine kl;
+        kl = new DocKLine(col.find(eq("windCode", "600000.SH")).first());
         kl.setName("PuFaBank");
         col.replaceOne(eq("_id", kl.get_id()), kl.getDocument());
         logger.info(col.find(eq("windCode", "600000.SH")).first().toJson());
 
-        kl = new KLine(col.find(eq("windCode", "600000.SH")).first());
+        kl = new DocKLine(col.find(eq("windCode", "600000.SH")).first());
         kl.setName("PuFaYinHang");
         col.replaceOne(eq("_id", kl.get_id()), kl.getDocument());
         logger.info(col.find(eq("windCode", "600000.SH")).first().toJson());
 
-        KLine klReplace = new KLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
+        DocKLine klReplace = new DocKLine("600000.SH", "600000", "PuFaYinHang", "SH-2-0", RefillFlag.REFILL_BACKWARD.getFlag(),
                 CycType.CYC_MINUTE.getFlag(), 1, 20160818, 94500000, 200, 400, 100, 300, 1000, 2000, 10);
         try {
             col.replaceOne(eq("windCode", "600000.SH"), klReplace.getDocument());

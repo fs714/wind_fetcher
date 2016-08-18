@@ -8,7 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class KLine extends DocBase {
+public class DocKLine extends DocBase {
     private String windCode;
     private String code;
     private String name;
@@ -25,8 +25,8 @@ public class KLine extends DocBase {
     private long amount;
     private int transNum;
 
-    public KLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
-                 Date date, int open, int high, int low, int close, long volume, long amount, int transNum) {
+    public DocKLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
+                    Date date, int open, int high, int low, int close, long volume, long amount, int transNum) {
         this.windCode = windCode;
         this.code = code;
         this.name = name;
@@ -45,9 +45,9 @@ public class KLine extends DocBase {
         toDocument();
     }
 
-    public KLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
-                 int date, int time, int open, int high, int low, int close, long volume, long amount,
-                 int transNum) throws ParseException {
+    public DocKLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
+                    int date, int time, int open, int high, int low, int close, long volume, long amount,
+                    int transNum) throws ParseException {
         DateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         Date dateTime;
         if (time > 99999999) {
@@ -73,7 +73,7 @@ public class KLine extends DocBase {
         toDocument();
     }
 
-    public KLine(Document document) {
+    public DocKLine(Document document) {
         this.document = document;
         this._id = (ObjectId) document.get("_id");
         this.windCode = (String) document.get("windCode");

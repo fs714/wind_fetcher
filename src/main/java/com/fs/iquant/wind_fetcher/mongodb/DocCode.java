@@ -3,14 +3,14 @@ package com.fs.iquant.wind_fetcher.mongodb;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-public class SharesCode extends DocBase {
+public class DocCode extends DocBase {
     private String windCode;
     private String code;
     private String market;
     private String name;
     private int type;
 
-    SharesCode(String windCode, String code, String market, String name, int type) {
+    public DocCode(String windCode, String code, String market, String name, int type) {
         this.windCode = windCode;
         this.code = code;
         this.market = market;
@@ -19,7 +19,7 @@ public class SharesCode extends DocBase {
         toDocument();
     }
 
-    SharesCode(Document document) {
+    public DocCode(Document document) {
         this.document = document;
         this._id = (ObjectId) document.get("_id");
         this.windCode = (String) document.get("windCode");

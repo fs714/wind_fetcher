@@ -1,4 +1,4 @@
-package com.fs.iquant.wind_fetcher.tdb;
+package com.fs.iquant.wind_fetcher.tdb.enums;
 
 public enum CycType {
     CYC_MINUTE(1),
@@ -11,7 +11,7 @@ public enum CycType {
 
     private int flag;
 
-    private CycType(int flag) {
+    CycType(int flag) {
         this.flag = flag;
     }
 
