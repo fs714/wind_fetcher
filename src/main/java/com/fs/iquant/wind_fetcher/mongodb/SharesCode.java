@@ -20,13 +20,13 @@ public class SharesCode extends DocBase {
     }
 
     SharesCode(Document document) {
+        this.document = document;
         this._id = (ObjectId) document.get("_id");
         this.windCode = (String) document.get("windCode");
         this.code = (String) document.get("code");
         this.market = (String) document.get("market");
         this.name = (String) document.get("name");
         this.type = (int) document.get("type");
-        this.document = document;
     }
 
     private Document toDocument() {
@@ -49,6 +49,7 @@ public class SharesCode extends DocBase {
 
     public void setWindCode(String windCode) {
         this.windCode = windCode;
+        document.put("windCode", windCode);
     }
 
     public String getCode() {
@@ -57,6 +58,7 @@ public class SharesCode extends DocBase {
 
     public void setCode(String code) {
         this.code = code;
+        document.put("code", code);
     }
 
     public String getMarket() {
@@ -65,6 +67,7 @@ public class SharesCode extends DocBase {
 
     public void setMarket(String market) {
         this.market = market;
+        document.put("market", market);
     }
 
     public String getName() {
@@ -73,6 +76,7 @@ public class SharesCode extends DocBase {
 
     public void setName(String name) {
         this.name = name;
+        document.put("name", name);
     }
 
     public int getType() {
@@ -81,5 +85,6 @@ public class SharesCode extends DocBase {
 
     public void setType(int type) {
         this.type = type;
+        document.put("type", type);
     }
 }

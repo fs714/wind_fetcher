@@ -5,7 +5,6 @@ import cn.com.wind.td.tdb.KLine;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
 import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.text.SimpleDateFormat;

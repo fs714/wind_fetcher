@@ -1,12 +1,12 @@
 package com.fs.iquant.wind_fetcher.mongodb;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class KLine extends DocBase {
     private String windCode;
@@ -42,13 +42,19 @@ public class KLine extends DocBase {
         this.volume = volume;
         this.amount = amount;
         this.transNum = transNum;
+        toDocument();
     }
 
     public KLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
                  int date, int time, int open, int high, int low, int close, long volume, long amount,
                  int transNum) throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS", Locale.ENGLISH);
-        Date dateTime = format.parse(Integer.toString(date) + Integer.toString(time));
+        DateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Date dateTime;
+        if (time > 99999999) {
+            dateTime = format.parse(Integer.toString(date) + Integer.toString(time));
+        } else {
+            dateTime = format.parse(Integer.toString(date) + "0" + Integer.toString(time));
+        }
         this.windCode = windCode;
         this.code = code;
         this.name = name;
@@ -64,10 +70,31 @@ public class KLine extends DocBase {
         this.volume = volume;
         this.amount = amount;
         this.transNum = transNum;
+        toDocument();
+    }
+
+    public KLine(Document document) {
+        this.document = document;
+        this._id = (ObjectId) document.get("_id");
+        this.windCode = (String) document.get("windCode");
+        this.code = (String) document.get("code");
+        this.name = (String) document.get("name");
+        this.market = (String) document.get("market");
+        this.refillFlag = (int) document.get("refillFlag");
+        this.cycType = (int) document.get("cycType");
+        this.cycDef = (int) document.get("cycDef");
+        this.date = (Date) document.get("date");
+        this.open = (int) document.get("open");
+        this.high = (int) document.get("high");
+        this.low = (int) document.get("low");
+        this.close = (int) document.get("close");
+        this.volume = (long) document.get("volume");
+        this.amount = (long) document.get("amount");
+        this.transNum = (int) document.get("transNum");
     }
 
     private Document toDocument() {
-        Document document = new Document("_id", get_id())
+        document = new Document("_id", get_id())
                 .append("windCode", getWindCode())
                 .append("code", getCode())
                 .append("name", getName())
@@ -86,12 +113,17 @@ public class KLine extends DocBase {
         return document;
     }
 
+    public String toString() {
+        return getDate() + "\t" + getDocument().toJson();
+    }
+
     public String getWindCode() {
         return windCode;
     }
 
     public void setWindCode(String windCode) {
         this.windCode = windCode;
+        document.put("windCode", windCode);
     }
 
     public String getCode() {
@@ -100,6 +132,7 @@ public class KLine extends DocBase {
 
     public void setCode(String code) {
         this.code = code;
+        document.put("code", code);
     }
 
     public String getName() {
@@ -108,6 +141,7 @@ public class KLine extends DocBase {
 
     public void setName(String name) {
         this.name = name;
+        document.put("name", name);
     }
 
     public String getMarket() {
@@ -116,6 +150,7 @@ public class KLine extends DocBase {
 
     public void setMarket(String market) {
         this.market = market;
+        document.put("market", market);
     }
 
     public int getRefillFlag() {
@@ -124,6 +159,7 @@ public class KLine extends DocBase {
 
     public void setRefillFlag(int refillFlag) {
         this.refillFlag = refillFlag;
+        document.put("refillFlag", refillFlag);
     }
 
     public int getCycType() {
@@ -132,6 +168,7 @@ public class KLine extends DocBase {
 
     public void setCycType(int cycType) {
         this.cycType = cycType;
+        document.put("cycType", cycType);
     }
 
     public int getCycDef() {
@@ -140,6 +177,7 @@ public class KLine extends DocBase {
 
     public void setCycDef(int cycDef) {
         this.cycDef = cycDef;
+        document.put("cycDef", cycDef);
     }
 
     public Date getDate() {
@@ -148,6 +186,7 @@ public class KLine extends DocBase {
 
     public void setDate(Date date) {
         this.date = date;
+        document.put("date", date);
     }
 
     public int getOpen() {
@@ -156,6 +195,7 @@ public class KLine extends DocBase {
 
     public void setOpen(int open) {
         this.open = open;
+        document.put("open", open);
     }
 
     public int getHigh() {
@@ -164,6 +204,7 @@ public class KLine extends DocBase {
 
     public void setHigh(int high) {
         this.high = high;
+        document.put("high", high);
     }
 
     public int getLow() {
@@ -172,6 +213,7 @@ public class KLine extends DocBase {
 
     public void setLow(int low) {
         this.low = low;
+        document.put("low", low);
     }
 
     public int getClose() {
@@ -180,6 +222,7 @@ public class KLine extends DocBase {
 
     public void setClose(int close) {
         this.close = close;
+        document.put("close", close);
     }
 
     public long getVolume() {
@@ -188,6 +231,7 @@ public class KLine extends DocBase {
 
     public void setVolume(long volume) {
         this.volume = volume;
+        document.put("volume", volume);
     }
 
     public long getAmount() {
@@ -196,6 +240,7 @@ public class KLine extends DocBase {
 
     public void setAmount(long amount) {
         this.amount = amount;
+        document.put("amount", amount);
     }
 
     public int getTransNum() {
@@ -204,5 +249,6 @@ public class KLine extends DocBase {
 
     public void setTransNum(int transNum) {
         this.transNum = transNum;
+        document.put("transNum", transNum);
     }
 }
