@@ -165,6 +165,10 @@ public class Tdb {
                 beginDate, endDate, 0, 0);
     }
 
+    public TDBClient getClient() {
+        return client;
+    }
+
     public Code[] getShSharesA() {
         return shSharesA;
     }
