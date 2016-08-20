@@ -120,7 +120,7 @@ public class TdbTest {
     }
 
     @Test(enabled = false)
-    public void getKlinesTest() throws TdbGetDataException {
+    public void getKlinesTest() {
         KLine[] kLines;
         int cyctype = CycType.CYC_MINUTE.getFlag();
         int beginDate = 20130801;
@@ -146,7 +146,7 @@ public class TdbTest {
     }
 
     @Test(enabled = false)
-    public void getMultiKlinesTest() throws TdbGetDataException {
+    public void getMultiKlinesTest() {
         String[] codeList = new String[]{"000731.SZ", "000732.SZ", "000733.SZ", "000735.SZ", "000736.SZ",};
         String market = "SZ-2-0";
         int cyctype = CycType.CYC_DAY.getFlag();

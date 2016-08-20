@@ -131,7 +131,7 @@ public class Tdb {
     }
 
     public KLine[] getKLines(String code, String market, int cqflag, int cyctype, int cycdef, int autoComplete,
-                             int beginDate, int endDate, int beginTime, int endtime) throws TdbGetDataException {
+                             int beginDate, int endDate, int beginTime, int endtime) {
         ReqKLine reqKL = new ReqKLine();
         reqKL.setCode(code);
         reqKL.setMarketKey(market);
@@ -144,23 +144,21 @@ public class Tdb {
         reqKL.setBeginTime(beginTime);
         reqKL.setEndTime(endtime);
 
-        KLine[] klines = client.getKLine(reqKL);
+        return client.getKLine(reqKL);
+    }
 
-        if (klines.length == 0) {
-            throw new TdbGetDataException("Return null with getKLines");
-        }
-
-        return klines;
+    public KLine[] getKLines(String code, String market, int cqflag, int cyctype, int cycdef, int beginDate,
+                             int endDate, int beginTime, int endtime) {
+        return getKLines(code, market, cqflag, cyctype, cycdef, 0, beginDate, endDate, beginTime, endtime);
     }
 
     public KLine[] getKLines(String code, String market, int cyctype, int cycdef, int beginDate, int endDate,
-                             int beginTime, int endtime) throws TdbGetDataException {
+                             int beginTime, int endtime) {
         return getKLines(code, market, RefillFlag.REFILL_BACKWARD.getFlag(), cyctype, cycdef, 0, beginDate, endDate,
                 beginTime, endtime);
     }
 
-    public KLine[] getKLines(String code, String market, int cyctype, int cycdef, int beginDate,
-                             int endDate) throws TdbGetDataException {
+    public KLine[] getKLines(String code, String market, int cyctype, int cycdef, int beginDate, int endDate) {
         return getKLines(code, market, RefillFlag.REFILL_BACKWARD.getFlag(), cyctype, cycdef, 0,
                 beginDate, endDate, 0, 0);
     }

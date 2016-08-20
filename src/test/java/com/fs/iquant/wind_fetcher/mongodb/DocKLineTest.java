@@ -106,6 +106,12 @@ public class DocKLineTest {
         } finally {
             cursor.close();
         }
+
+        logger.info("------ Find null with filter ------");
+        Document doc = col.find(eq("windCode", "900000.SH")).first();
+        if (doc == null) {
+            logger.info("Find Nothing");
+        }
     }
 
     @Test(enabled = false, dependsOnMethods = "insertTest")

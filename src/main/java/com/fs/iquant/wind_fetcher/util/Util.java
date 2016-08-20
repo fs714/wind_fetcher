@@ -1,6 +1,8 @@
 package com.fs.iquant.wind_fetcher.util;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Util {
     public Util() {
@@ -18,5 +20,12 @@ public class Util {
             offset += array.length;
         }
         return result;
+    }
+
+    public static Date dateAdd(Date date, int type, int num) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(type, num);
+        return c.getTime();
     }
 }

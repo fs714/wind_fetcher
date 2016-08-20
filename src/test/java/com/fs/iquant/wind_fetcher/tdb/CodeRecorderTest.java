@@ -3,12 +3,9 @@ package com.fs.iquant.wind_fetcher.tdb;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
 import com.fs.iquant.wind_fetcher.mongodb.DocCode;
 import com.fs.iquant.wind_fetcher.mongodb.DocCodeTest;
-import com.fs.iquant.wind_fetcher.tdb.enums.CodeType;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.log4j.Logger;
-import org.bson.Document;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -44,7 +41,7 @@ public class CodeRecorderTest {
         tdb.getClient().close();
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void saveTest() {
         logger.info("Start saveTest");
         codeRec.save();
@@ -52,7 +49,7 @@ public class CodeRecorderTest {
         logger.info(new DocCode(codeRec.getCodeCol().getCol().find().first()).toString());
     }
 
-    @Test(enabled = true, dependsOnMethods = "saveTest")
+    @Test(enabled = false, dependsOnMethods = "saveTest")
     public void dropTest() {
         logger.info("Start dropTest");
         codeRec.drop();

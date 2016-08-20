@@ -1,11 +1,10 @@
 package com.fs.iquant.wind_fetcher.mongodb;
 
+import com.fs.iquant.wind_fetcher.util.WindDateTime;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DocKLine extends DocBase {
@@ -48,13 +47,6 @@ public class DocKLine extends DocBase {
     public DocKLine(String windCode, String code, String name, String market, int refillFlag, int cycType, int cycDef,
                     int date, int time, int open, int high, int low, int close, long volume, long amount,
                     int transNum) throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date dateTime;
-        if (time > 99999999) {
-            dateTime = format.parse(Integer.toString(date) + Integer.toString(time));
-        } else {
-            dateTime = format.parse(Integer.toString(date) + "0" + Integer.toString(time));
-        }
         this.windCode = windCode;
         this.code = code;
         this.name = name;
@@ -62,7 +54,7 @@ public class DocKLine extends DocBase {
         this.refillFlag = refillFlag;
         this.cycType = cycType;
         this.cycDef = cycDef;
-        this.date = dateTime;
+        this.date = new WindDateTime(date, time).getDate();
         this.open = open;
         this.high = high;
         this.low = low;

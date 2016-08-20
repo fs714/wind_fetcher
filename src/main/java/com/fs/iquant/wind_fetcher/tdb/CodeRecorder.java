@@ -18,6 +18,7 @@ public class CodeRecorder {
     }
 
     public void save() {
+        drop();
         Code[] codes = tdb.getAllSharesAndIndex();
         for (Code code : codes) {
             DocCode docCode = new DocCode(code.getWindCode(), code.getCode(), code.getMarket(), code.getCNName(),
