@@ -9,6 +9,7 @@ import com.fs.iquant.wind_fetcher.tdb.enums.RefillFlag;
 import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.w3c.dom.ranges.Range;
 
 public class WindApiTest {
     private static final String EXAMPLE_CODE_ONE = "000001.SZ";
@@ -112,5 +113,22 @@ public class WindApiTest {
         reqKL.setEndTime(144000000);
         klines = client.getKLine(reqKL);
         logger.info("Delisted Share Code: " + klines.length);
+    }
+
+    @Test(enabled = false)
+    public void totalKlinesOneDayTest() {
+        KLine[] klines;
+
+        int start = 20130801;
+        int i = 0;
+        while (i < 30) {
+            reqKL.setBeginDate(start);
+            reqKL.setEndDate(start);
+            klines = client.getKLine(reqKL);
+            logger.info("Trading Day " + start + ": " + klines.length);
+            start++;
+            i++;
+        }
+
     }
 }

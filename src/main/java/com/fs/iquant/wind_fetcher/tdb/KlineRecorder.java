@@ -43,7 +43,7 @@ public class KlineRecorder {
         if (klines != null) {
             for (KLine kl : klines) {
                 Document doc = klineCol.getCol().find(and(eq("refillFlag", refillFlag), eq("cycType", cycType),
-                        eq("cycDef", cycDef), eq("date", kl.getDate()))).first();
+                        eq("cycDef", cycDef), eq("date", new WindDateTime(kl.getDate(), kl.getTime()).getDate()))).first();
                 if (doc == null) {
                     DocKLine docKLine = new DocKLine(code.getWindCode(), code.getCode(), code.getCNName(), code.getMarket(),
                             refillFlag, cycType, cycDef, kl.getDate(), kl.getTime(), kl.getOpen(), kl.getHigh(), kl.getLow(),
@@ -56,6 +56,26 @@ public class KlineRecorder {
 
     public void saveNoOverwrite(int cycType, Date beginDate, Date endDate) throws ParseException {
         saveNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
+    }
+
+    protected void saveNoOverwriteNoCheck(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
+            throws ParseException {
+        WindDateTime begin = new WindDateTime(beginDate);
+        WindDateTime end = new WindDateTime(endDate);
+        KLine[] klines = tdb.getKLines(code.getWindCode(), code.getMarket(), refillFlag, cycType, cycDef,
+                begin.getWindDate(), end.getWindDate(), begin.getWindTime(), end.getWindTime());
+        if (klines != null) {
+            for (KLine kl : klines) {
+                DocKLine docKLine = new DocKLine(code.getWindCode(), code.getCode(), code.getCNName(), code.getMarket(),
+                        refillFlag, cycType, cycDef, kl.getDate(), kl.getTime(), kl.getOpen(), kl.getHigh(), kl.getLow(),
+                        kl.getClose(), kl.getVolume(), kl.getTurover(), kl.getMatchItems());
+                klineCol.getCol().insertOne(docKLine.getDocument());
+            }
+        }
+    }
+
+    protected void saveNoOverwriteNoCheck(int cycType, Date beginDate, Date endDate) throws ParseException {
+        saveNoOverwriteNoCheck(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
     }
 
     public void saveAndOverwrite(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate) throws ParseException {
@@ -95,17 +115,17 @@ public class KlineRecorder {
         Document doc = klineCol.getCol().find(and(eq("refillFlag", refillFlag), eq("cycType", cycType),
                 eq("cycDef", cycDef))).sort(descending("date")).first();
         if (doc == null) {
-            saveNoOverwrite(refillFlag, cycType, cycDef, beginDate, endDate);
+            saveNoOverwriteNoCheck(refillFlag, cycType, cycDef, beginDate, endDate);
         } else {
             Date latestDate = (Date) doc.get("date");
             if (endDate.after(latestDate)) {
                 if (beginDate.after(latestDate)) {
-                    saveNoOverwrite(refillFlag, cycType, cycDef, beginDate, endDate);
+                    saveNoOverwriteNoCheck(refillFlag, cycType, cycDef, beginDate, endDate);
                 } else {
                     Calendar c = Calendar.getInstance();
                     c.setTime(latestDate);
                     c.add(Calendar.MILLISECOND, 1);
-                    saveNoOverwrite(refillFlag, cycType, cycDef, c.getTime(), endDate);
+                    saveNoOverwriteNoCheck(refillFlag, cycType, cycDef, c.getTime(), endDate);
                 }
             }
         }
@@ -115,20 +135,20 @@ public class KlineRecorder {
         saveNewNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
     }
 
-    public void saveHistoryNoOverwrite(int refillFlag, int cycType, int cycDef, Date begindate, Date endDate)
+    public void saveHistoryNoOverwrite(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
             throws ParseException {
-        Date begin = begindate;
+        Date begin = beginDate;
         Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         while (begin.before(endDate)) {
             saveNoOverwrite(refillFlag, cycType, cycDef, begin, end);
-            begin = end;
+            begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
             end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         }
     }
 
-    public void saveHistoryNoOverwrite(int cycType, Date begindate, Date endDate)
+    public void saveHistoryNoOverwrite(int cycType, Date beginDate, Date endDate)
             throws ParseException {
-        saveHistoryNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, begindate, endDate);
+        saveHistoryNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
     }
 
     public void saveHistoryNoOverwrite(int refillFlag, int cycType, int cycDef) throws ParseException {
@@ -144,20 +164,37 @@ public class KlineRecorder {
         saveHistoryNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1);
     }
 
-    public void saveHistoryAndOverwrite(int refillFlag, int cycType, int cycDef, Date begindate, Date endDate)
+    protected void saveHistoryNoOverwriteNoCheck(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
             throws ParseException {
-        Date begin = begindate;
+        Date begin = beginDate;
         Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         while (begin.before(endDate)) {
-            saveAndOverwrite(refillFlag, cycType, cycDef, begin, end);
+            saveNoOverwriteNoCheck(refillFlag, cycType, cycDef, begin, end);
+            // begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
             begin = end;
             end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         }
     }
 
-    public void saveHistoryAndOverwrite(int cycType, Date begindate, Date endDate)
+    protected void saveHistoryNoOverwriteNoCheck(int cycType, Date beginDate, Date endDate)
             throws ParseException {
-        saveHistoryAndOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, begindate, endDate);
+        saveHistoryNoOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
+    }
+
+    public void saveHistoryAndOverwrite(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
+            throws ParseException {
+        Date begin = beginDate;
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        while (begin.before(endDate)) {
+            saveAndOverwrite(refillFlag, cycType, cycDef, begin, end);
+            begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        }
+    }
+
+    public void saveHistoryAndOverwrite(int cycType, Date beginDate, Date endDate)
+            throws ParseException {
+        saveHistoryAndOverwrite(RefillFlag.REFILL_BACKWARD.getFlag(), cycType, 1, beginDate, endDate);
     }
 
     public void saveHistoryAndOverwrite(int refillFlag, int cycType, int cycDef) throws ParseException {
@@ -178,17 +215,17 @@ public class KlineRecorder {
         Document doc = klineCol.getCol().find(and(eq("refillFlag", refillFlag), eq("cycType", cycType),
                 eq("cycDef", cycDef))).sort(descending("date")).first();
         if (doc == null) {
-            saveHistoryNoOverwrite(refillFlag, cycType, cycDef, beginDate, endDate);
+            saveHistoryNoOverwriteNoCheck(refillFlag, cycType, cycDef, beginDate, endDate);
         } else {
             Date latestDate = (Date) doc.get("date");
             if (endDate.after(latestDate)) {
                 if (beginDate.after(latestDate)) {
-                    saveHistoryNoOverwrite(refillFlag, cycType, cycDef, beginDate, endDate);
+                    saveHistoryNoOverwriteNoCheck(refillFlag, cycType, cycDef, beginDate, endDate);
                 } else {
                     Calendar c = Calendar.getInstance();
                     c.setTime(latestDate);
                     c.add(Calendar.MILLISECOND, 1);
-                    saveHistoryNoOverwrite(refillFlag, cycType, cycDef, c.getTime(), endDate);
+                    saveHistoryNoOverwriteNoCheck(refillFlag, cycType, cycDef, c.getTime(), endDate);
                 }
             }
         }
@@ -233,6 +270,54 @@ public class KlineRecorder {
     public void saveAllNoOverwrite() throws ParseException {
         for (CycType cycType : CycType.values()) {
             saveHistoryNoOverwrite(cycType.getFlag());
+        }
+    }
+
+    public void saveAllAndOverwrite(int refillFlag, int cycDef, Date begindate, Date endDate) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveHistoryAndOverwrite(refillFlag, cycType.getFlag(), cycDef, begindate, endDate);
+        }
+    }
+
+    public void saveAllAndOverwrite(Date begindate, Date endDate) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveHistoryAndOverwrite(cycType.getFlag(), begindate, endDate);
+        }
+    }
+
+    public void saveAllAndOverwrite(int refillFlag, int cycDef) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveHistoryAndOverwrite(refillFlag, cycType.getFlag(), cycDef);
+        }
+    }
+
+    public void saveAllAndOverwrite() throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveHistoryAndOverwrite(cycType.getFlag());
+        }
+    }
+
+    public void saveNewAllNoOverwrite(int refillFlag, int cycDef, Date begindate, Date endDate) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveNewHistoryNoOverwrite(refillFlag, cycType.getFlag(), cycDef, begindate, endDate);
+        }
+    }
+
+    public void saveNewAllNoOverwrite(Date begindate, Date endDate) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveNewHistoryNoOverwrite(cycType.getFlag(), begindate, endDate);
+        }
+    }
+
+    public void saveNewAllNoOverwrite(int refillFlag, int cycDef) throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveNewHistoryNoOverwrite(refillFlag, cycType.getFlag(), cycDef);
+        }
+    }
+
+    public void saveNewAllNoOverwrite() throws ParseException {
+        for (CycType cycType : CycType.values()) {
+            saveNewHistoryNoOverwrite(cycType.getFlag());
         }
     }
 

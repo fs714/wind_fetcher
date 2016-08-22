@@ -4,17 +4,23 @@ import cn.com.wind.td.tdb.Code;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
 import com.fs.iquant.wind_fetcher.mongodb.DocKLine;
 import com.fs.iquant.wind_fetcher.tdb.enums.CycType;
+import com.fs.iquant.wind_fetcher.util.Util;
 import com.fs.iquant.wind_fetcher.util.WindDateTime;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.apache.log4j.Logger;
+import org.bson.Document;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import static com.mongodb.client.model.Filters.*;
 
 public class KlineRecorderTest {
     private static Logger logger = Logger.getLogger(KlineRecorderTest.class.getCanonicalName());
@@ -56,31 +62,110 @@ public class KlineRecorderTest {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         Date end = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -40);
+        calendar.add(Calendar.DAY_OF_MONTH, -30);
         Date begin = calendar.getTime();
+
+        long t1 = System.currentTimeMillis();
 
         klineRec.saveNoOverwrite(cycType, begin, end);
         logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
-        logger.info(new DocKLine(klineRec.getKlineCol().getCol().find().first()).toString());
+        long t2 = System.currentTimeMillis();
+
+        klineRec.drop();
+        klineRec.saveNoOverwriteNoCheck(cycType, begin, end);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t3 = System.currentTimeMillis();
+
+        klineRec.saveNoOverwrite(cycType, begin, end);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t4 = System.currentTimeMillis();
+
+        logger.info("t2 - t1 = " + (t2 - t1)/1000);
+        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+        logger.info("t4 - t3 = " + (t4 - t3)/1000);
     }
 
     @Test(enabled = false)
-    public void saveAllTest() throws ParseException {
-        logger.info("Start saveAllTest");
+    public void saveNewTest() throws ParseException {
+        logger.info("Start saveNewTest");
+        int cycType = CycType.CYC_MINUTE.getFlag();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        Date end = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -30);
+        Date begin = calendar.getTime();
+
+        long t1 = System.currentTimeMillis();
+
+        klineRec.saveNewNoOverwrite(cycType, begin, end);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t2 = System.currentTimeMillis();
+
+        klineRec.saveNewNoOverwrite(cycType, begin, end);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t3 = System.currentTimeMillis();
+
+        logger.info("t2 - t1 = " + (t2 - t1)/1000);
+        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+    }
+
+    @Test(enabled = false)
+    public void saveNewHistoryTest() throws ParseException {
+        logger.info("Start saveNewHistoryTest");
         int cycType = CycType.CYC_MINUTE.getFlag();
 
-        WindDateTime windDate = new WindDateTime(20130801, 0);
-        Date begin = windDate.getDate();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(begin);
-        calendar.add(Calendar.DAY_OF_MONTH, 30);
-        Date end = calendar.getTime();
+        long t1 = System.currentTimeMillis();
+
+        klineRec.saveNewHistoryNoOverwrite(cycType);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t2 = System.currentTimeMillis();
+
+        klineRec.saveNewHistoryNoOverwrite(cycType);
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t3 = System.currentTimeMillis();
+
+        logger.info("t2 - t1 = " + (t2 - t1)/1000);
+        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+    }
+
+    @Test(enabled = false)
+    public void saveNewAllTest() throws ParseException {
+        logger.info("Start saveNewAllTest");
+        int cycType = CycType.CYC_MINUTE.getFlag();
+
+        long t1 = System.currentTimeMillis();
+
+        klineRec.saveNewAllNoOverwrite();
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t2 = System.currentTimeMillis();
+
+        klineRec.saveNewAllNoOverwrite();
+        logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
+        long t3 = System.currentTimeMillis();
+
+        logger.info("t2 - t1 = " + (t2 - t1)/1000);
+        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+    }
+
+    @Test(enabled = true)
+    public void tempTest() throws ParseException {
+        // DateFormat f = new SimpleDateFormat("yyyyMMdd-HHmmss-SSS");
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.set(2013, 7, 1, 1, 0, 0);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.add(Calendar.YEAR, -3);
+
+        Date begin = c.getTime();
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         while (begin.before(new Date())) {
-            klineRec.saveNoOverwrite(cycType, begin, end);
+            logger.info("--------------");
+            logger.info(begin);
+            logger.info(end);
+            // begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
             begin = end;
-            calendar.setTime(begin);
-            calendar.add(Calendar.DAY_OF_MONTH, 30);
-            end = calendar.getTime();
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
         }
     }
 }
