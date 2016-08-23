@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import org.w3c.dom.ranges.Range;
 
 public class WindApiTest {
-    private static final String EXAMPLE_CODE_ONE = "000001.SZ";
+    private static final String EXAMPLE_CODE_ONE = "600000.SH";
     private static Logger logger = Logger.getLogger(WindApiTest.class.getCanonicalName());
     private TDBClient client;
     private ReqKLine reqKL;
@@ -38,7 +38,7 @@ public class WindApiTest {
 
         reqKL = new ReqKLine();
         reqKL.setCode(EXAMPLE_CODE_ONE);
-        reqKL.setMarketKey(Tdb.MARKET_SZ_SHARES);
+        reqKL.setMarketKey(Tdb.MARKET_SH_SHARES);
         reqKL.setCQFlag(RefillFlag.REFILL_BACKWARD.getFlag());
         reqKL.setCycType(CycType.CYC_MINUTE.getFlag());
         reqKL.setCycDef(1);
@@ -120,15 +120,20 @@ public class WindApiTest {
         KLine[] klines;
 
         int start = 20130801;
+        int end = start + 1;
+        int startTime = 60000000;
+        int endTime = 55959000;
         int i = 0;
         while (i < 30) {
             reqKL.setBeginDate(start);
-            reqKL.setEndDate(start);
+            reqKL.setEndDate(end);
+            reqKL.setBeginTime(startTime);
+            reqKL.setEndTime(endTime);
             klines = client.getKLine(reqKL);
             logger.info("Trading Day " + start + ": " + klines.length);
             start++;
-            i++;
+            end = start + 1;
+            i = i + 1;
         }
-
     }
 }

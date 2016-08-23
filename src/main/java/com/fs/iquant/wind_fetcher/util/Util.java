@@ -28,4 +28,12 @@ public class Util {
         c.add(type, num);
         return c.getTime();
     }
+
+    public static Date dateAdd(Date date, int type1, int num1, int type2, int num2 ) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(type1, num1);
+        c.add(type2, num2);
+        return c.getTime();
+    }
 }

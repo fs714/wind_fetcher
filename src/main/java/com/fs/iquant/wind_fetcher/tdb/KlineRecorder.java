@@ -22,6 +22,10 @@ import static com.mongodb.client.model.Sorts.descending;
 
 public class KlineRecorder {
     public static final int WIND_AVAILABLE_YEARS = -3;
+    public static final int START_DAY = 1;
+    public static final int START_HOUR = 6;
+    public static final int START_MINUTE = 0;
+    public static final int START_SECOND = 0;
 
     private static Logger logger = Logger.getLogger(Tdb.class.getCanonicalName());
     private Tdb tdb;
@@ -138,11 +142,11 @@ public class KlineRecorder {
     public void saveHistoryNoOverwrite(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
             throws ParseException {
         Date begin = beginDate;
-        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         while (begin.before(endDate)) {
             saveNoOverwrite(refillFlag, cycType, cycDef, begin, end);
-            begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
-            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+            begin = Util.dateAdd(end, Calendar.SECOND, 1);
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         }
     }
 
@@ -154,7 +158,7 @@ public class KlineRecorder {
     public void saveHistoryNoOverwrite(int refillFlag, int cycType, int cycDef) throws ParseException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), START_DAY, START_HOUR, START_MINUTE, START_SECOND);
         c.add(Calendar.YEAR, WIND_AVAILABLE_YEARS);
 
         saveHistoryNoOverwrite(refillFlag, cycType, cycDef, c.getTime(), new Date());
@@ -167,12 +171,11 @@ public class KlineRecorder {
     protected void saveHistoryNoOverwriteNoCheck(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
             throws ParseException {
         Date begin = beginDate;
-        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         while (begin.before(endDate)) {
             saveNoOverwriteNoCheck(refillFlag, cycType, cycDef, begin, end);
-            // begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
-            begin = end;
-            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+            begin = Util.dateAdd(end, Calendar.SECOND, 1);
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         }
     }
 
@@ -184,11 +187,11 @@ public class KlineRecorder {
     public void saveHistoryAndOverwrite(int refillFlag, int cycType, int cycDef, Date beginDate, Date endDate)
             throws ParseException {
         Date begin = beginDate;
-        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         while (begin.before(endDate)) {
             saveAndOverwrite(refillFlag, cycType, cycDef, begin, end);
-            begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
-            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+            begin = Util.dateAdd(end, Calendar.SECOND, 1);
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         }
     }
 
@@ -200,7 +203,7 @@ public class KlineRecorder {
     public void saveHistoryAndOverwrite(int refillFlag, int cycType, int cycDef) throws ParseException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), START_DAY, START_HOUR, START_MINUTE, START_SECOND);
         c.add(Calendar.YEAR, WIND_AVAILABLE_YEARS);
 
         saveHistoryAndOverwrite(refillFlag, cycType, cycDef, c.getTime(), new Date());
@@ -239,7 +242,7 @@ public class KlineRecorder {
     public void saveNewHistoryNoOverwrite(int refillFlag, int cycType, int cycDef) throws ParseException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), START_DAY, START_HOUR, START_MINUTE, START_SECOND);
         c.add(Calendar.YEAR, WIND_AVAILABLE_YEARS);
 
         saveNewHistoryNoOverwrite(refillFlag, cycType, cycDef, c.getTime(), new Date());

@@ -89,11 +89,13 @@ public class KlineRecorderTest {
     public void saveNewTest() throws ParseException {
         logger.info("Start saveNewTest");
         int cycType = CycType.CYC_MINUTE.getFlag();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        Date end = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -30);
-        Date begin = calendar.getTime();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 1, 6, 0, 0);
+        c.add(Calendar.YEAR, -3);
+        Date begin = c.getTime();
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
 
         long t1 = System.currentTimeMillis();
 
@@ -147,25 +149,21 @@ public class KlineRecorderTest {
         logger.info("t3 - t2 = " + (t3 - t2)/1000);
     }
 
-    @Test(enabled = true)
-    public void tempTest() throws ParseException {
-        // DateFormat f = new SimpleDateFormat("yyyyMMdd-HHmmss-SSS");
-
+    @Test(enabled = false)
+    public void dateIntervalTest() throws ParseException {
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.set(2013, 7, 1, 1, 0, 0);
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 1, 6, 0, 0);
         c.add(Calendar.YEAR, -3);
 
         Date begin = c.getTime();
-        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+        Date end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         while (begin.before(new Date())) {
             logger.info("--------------");
             logger.info(begin);
             logger.info(end);
-            // begin = Util.dateAdd(end, Calendar.DAY_OF_MONTH, 1);
-            begin = end;
-            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30);
+            begin = Util.dateAdd(end, Calendar.SECOND, 1);
+            end = Util.dateAdd(begin, Calendar.DAY_OF_MONTH, 30, Calendar.SECOND, -1);
         }
     }
 }
