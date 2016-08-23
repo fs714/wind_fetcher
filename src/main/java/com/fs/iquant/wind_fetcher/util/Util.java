@@ -29,7 +29,7 @@ public class Util {
         return c.getTime();
     }
 
-    public static Date dateAdd(Date date, int type1, int num1, int type2, int num2 ) {
+    public static Date dateAdd(Date date, int type1, int num1, int type2, int num2) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         c.add(type1, num1);

@@ -2,25 +2,18 @@ package com.fs.iquant.wind_fetcher.tdb;
 
 import cn.com.wind.td.tdb.Code;
 import com.fs.iquant.wind_fetcher.exceptions.TdbGetDataException;
-import com.fs.iquant.wind_fetcher.mongodb.DocKLine;
 import com.fs.iquant.wind_fetcher.tdb.enums.CycType;
 import com.fs.iquant.wind_fetcher.util.Util;
-import com.fs.iquant.wind_fetcher.util.WindDateTime;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.apache.log4j.Logger;
-import org.bson.Document;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import static com.mongodb.client.model.Filters.*;
 
 public class KlineRecorderTest {
     private static Logger logger = Logger.getLogger(KlineRecorderTest.class.getCanonicalName());
@@ -80,9 +73,9 @@ public class KlineRecorderTest {
         logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
         long t4 = System.currentTimeMillis();
 
-        logger.info("t2 - t1 = " + (t2 - t1)/1000);
-        logger.info("t3 - t2 = " + (t3 - t2)/1000);
-        logger.info("t4 - t3 = " + (t4 - t3)/1000);
+        logger.info("t2 - t1 = " + (t2 - t1) / 1000);
+        logger.info("t3 - t2 = " + (t3 - t2) / 1000);
+        logger.info("t4 - t3 = " + (t4 - t3) / 1000);
     }
 
     @Test(enabled = false)
@@ -107,8 +100,8 @@ public class KlineRecorderTest {
         logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
         long t3 = System.currentTimeMillis();
 
-        logger.info("t2 - t1 = " + (t2 - t1)/1000);
-        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+        logger.info("t2 - t1 = " + (t2 - t1) / 1000);
+        logger.info("t3 - t2 = " + (t3 - t2) / 1000);
     }
 
     @Test(enabled = false)
@@ -126,8 +119,8 @@ public class KlineRecorderTest {
         logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
         long t3 = System.currentTimeMillis();
 
-        logger.info("t2 - t1 = " + (t2 - t1)/1000);
-        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+        logger.info("t2 - t1 = " + (t2 - t1) / 1000);
+        logger.info("t3 - t2 = " + (t3 - t2) / 1000);
     }
 
     @Test(enabled = false)
@@ -145,8 +138,8 @@ public class KlineRecorderTest {
         logger.info("Collection Items Num: " + klineRec.getKlineCol().getCol().count());
         long t3 = System.currentTimeMillis();
 
-        logger.info("t2 - t1 = " + (t2 - t1)/1000);
-        logger.info("t3 - t2 = " + (t3 - t2)/1000);
+        logger.info("t2 - t1 = " + (t2 - t1) / 1000);
+        logger.info("t3 - t2 = " + (t3 - t2) / 1000);
     }
 
     @Test(enabled = false)

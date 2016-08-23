@@ -9,7 +9,6 @@ import com.fs.iquant.wind_fetcher.tdb.enums.RefillFlag;
 import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.ranges.Range;
 
 public class WindApiTest {
     private static final String EXAMPLE_CODE_ONE = "600000.SH";
